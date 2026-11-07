@@ -1,0 +1,35 @@
+.chart-wrap {
+  height: 340px;
+}
+
+.donut-wrap {
+  height: 245px;
+  max-width: 290px;
+}
+
+.image-panel img {
+  min-height: 270px;
+  object-fit: contain;
+}
+
+.gallery-grid img {
+  height: 220px;
+}
+
+@media (max-width: 700px) {
+  .chart-wrap {
+    height: 285px;
+  }
+
+  .donut-wrap {
+    height: 220px;
+  }
+
+  .image-panel img {
+    min-height: 190px;
+  }
+
+  .gallery-grid img {
+    height: 185px;
+  }
+}

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RuralPulse · Centros digitales</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='visuals.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="/">
+        <span class="brand-mark"><span></span><span></span><span></span></span>
+        <span>Rural<span>Pulse</span></span>
+      </a>
+      <div class="sidebar-label">Explorar</div>
+      <nav>
+        <a class="nav-link active" href="#resumen"><span>◈</span> Resumen</a>
+        <a class="nav-link" href="#distribucion"><span>◌</span> Distribución</a>
+        <a class="nav-link" href="#modelos"><span>⌁</span> Proyecciones</a>
+      </nav>
+      <div class="side-note">
+        <span class="pulse"></span>
+        <div><strong>Datos actualizados</strong><small>Corte {{ fecha_corte }}</small></div>
+      </div>
+      <div class="sidebar-footer">Observatorio de conectividad rural<br><span>Panel de inteligencia territorial</span></div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div class="breadcrumb">CENTROS DIGITALES <span>/</span> MONITOREO</div>
+        <div class="top-actions"><span class="live-dot"></span> Consulta: {{ fecha_actual }} <button class="avatar">CD</button></div>
+      </header>
+
+      <section class="hero" id="resumen">
+        <div>
+          <p class="eyebrow">LECTURA TERRITORIAL · {{ fecha_corte }}</p>
+          <h1>Conectividad que<br><em>transforma</em> territorios.</h1>
+          <p class="hero-copy">Una mirada clara al alcance de los centros digitales rurales y las oportunidades que aún están por activarse.</p>
+        </div>
+        <div class="hero-orbit"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><span class="orbit-core">✦</span></div>
+      </section>
+
+      <form class="filters" method="get">
+        <div class="filter-heading"><span class="filter-icon">≡</span><div><strong>Filtrar exploración</strong><small>Refina la lectura del territorio</small></div></div>
+        <label><span>Departamento</span><select name="departamento"><option value="">Todos</option>{% for item in departamentos %}<option value="{{ item }}" {% if filtros.departamento == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></label>
+        <label><span>Estado operativo</span><select name="estado"><option value="">Todos</option>{% for item in estados %}<option value="{{ item }}" {% if filtros.estado == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></label>
+        <label><span>Conectividad</span><select name="conectividad"><option value="">Todas</option>{% for item in conectividades %}<option value="{{ item }}" {% if filtros.conectividad == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></label>
+        <button class="filter-button" type="submit">Actualizar <span>↗</span></button>
+      </form>
+
+      <section class="metrics">
+        <article class="metric-card accent"><div class="metric-icon">⌂</div><small>CENTROS REGISTRADOS</small><strong>{{ "{:,}".format(total_centros).replace(",", ".") }}</strong><span>en el universo analizado</span></article>
+        <article class="metric-card"><div class="metric-icon users">◉</div><small>USUARIOS ACTIVOS / MES</small><strong>{{ "{:,}".format(total_usuarios).replace(",", ".") }}</strong><span><b class="positive">●</b> demanda registrada</span></article>
+        <article class="metric-card"><div class="metric-icon speed">↯</div><small>VELOCIDAD PROMEDIO</small><strong>{{ velocidad_promedio }} <i>Mbps</i></strong><span>velocidad de bajada</span></article>
+        <article class="metric-card"><div class="metric-icon investment">$</div><small>INVERSIÓN ACUMULADA</small><strong>${{ "{:,.0f}".format(inversion).replace(",", ".") }}</strong><span>valor reportado</span></article>
+      </section>
+
+      <section class="chart-grid" id="distribucion">
+        <article class="panel panel-large">
+          <div class="panel-head"><div><p class="eyebrow">MAPA DE PRESENCIA</p><h2>¿Dónde estamos llegando?</h2></div><span class="panel-badge">TOP 10</span></div>
+          <div class="chart-wrap"><canvas id="departmentChart"></canvas></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><p class="eyebrow">ESTADO DE RED</p><h2>Momento operativo</h2></div></div>
+          <div class="donut-wrap"><canvas id="statusChart"></canvas><div class="donut-center"><strong>{{ total_centros }}</strong><small>centros</small></div></div>
+          <div class="legend">{% for row in resumen_estado[:4] %}<div><span class="legend-color color-{{ loop.index }}"></span><span>{{ row.label }}</span><b>{{ row.value }}</b></div>{% endfor %}</div>
+        </article>
+      </section>
+
+      <section class="models" id="modelos">
+        <div class="section-title"><div><p class="eyebrow">MODELOS DE REFERENCIA</p><h2>Señales para decidir mejor</h2></div><p>Estimaciones construidas a partir de los datos agregados por departamento.</p></div>
+        <div class="image-grid">
+          <article class="image-panel"><div class="image-caption"><strong>Demanda potencial no observada</strong><span>Regresión lineal · usuarios activos</span><small>Proyección realizada: {{ fecha_proyeccion_usuarios }}</small></div><img src="{{ url_for('servir_grafica', filename='regresion_usuarios.png') }}" alt="Regresión de usuarios activos por departamento"></article>
+          <article class="image-panel"><div class="image-caption"><strong>Capacidad de operación proyectada</strong><span>Regresión lineal · centros operando</span><small>Proyección realizada: {{ fecha_proyeccion_operacion }}</small></div><img src="{{ url_for('servir_grafica', filename='regresion_operacion.png') }}" alt="Regresión de centros en operación"></article>
+        </div>
+      </section>
+
+      <section class="gallery">
+        <div class="section-title"><div><p class="eyebrow">DETALLE DEL UNIVERSO</p><h2>Más perspectivas</h2></div></div>
+        <div class="gallery-grid"><img src="{{ url_for('servir_grafica', filename='registros_por_estado.png') }}" alt="Registros por estado"><img src="{{ url_for('servir_grafica', filename='registros_por_conectividad.png') }}" alt="Registros por conectividad"><img src="{{ url_for('servir_grafica', filename='centros_por_departamento.png') }}" alt="Centros por departamento"><img src="{{ url_for('servir_grafica', filename='usuarios_activos_por_departamento.png') }}" alt="Usuarios activos por departamento"><img src="{{ url_for('servir_grafica', filename='velocidad_promedio_por_departamento.png') }}" alt="Velocidad promedio por departamento"></div>
+      </section>
+      <footer>RuralPulse <span>·</span> Datos de Centros Digitales Rurales <span>·</span> {{ fecha_corte }}</footer>
+    </main>
+  </div>
+  <script>window.dashboardData = {states: {{ resumen_estado | tojson }}, departments: {{ resumen_departamento | tojson }}};</script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

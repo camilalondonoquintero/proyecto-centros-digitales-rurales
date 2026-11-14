@@ -31,6 +31,10 @@
       <div class="sidebar-footer">Observatorio de conectividad rural<br><span>Panel de inteligencia territorial</span></div>
     </aside>
 
+    <button class="chat-launcher" id="chat-open" type="button" aria-haspopup="dialog" aria-controls="chat-modal">
+      <span class="chat-launcher-icon" aria-hidden="true">✦</span><span>Chat bot</span>
+    </button>
+
     <main class="content">
       <header class="topbar">
         <div class="breadcrumb">CENTROS DIGITALES <span>/</span> MONITOREO</div>
@@ -88,7 +92,26 @@
       <footer>RuralPulse <span>·</span> Datos de Centros Digitales Rurales <span>·</span> {{ fecha_corte }}</footer>
     </main>
   </div>
-  <script>window.dashboardData = {states: {{ resumen_estado | tojson }}, departments: {{ resumen_departamento | tojson }}};</script>
+  <div class="chat-overlay" id="chat-modal" aria-hidden="true">
+    <section class="chat-modal" role="dialog" aria-modal="true" aria-labelledby="chat-title">
+      <header class="chat-header">
+        <div class="chat-avatar" aria-hidden="true">✦</div>
+        <div><h2 id="chat-title">Asistente RuralPulse</h2><p>Pregúntame sobre los centros digitales</p></div>
+        <button class="chat-close" id="chat-close" type="button" aria-label="Cerrar chat">×</button>
+      </header>
+      <div class="chat-messages" id="chat-messages" role="log" aria-live="polite">
+        <div class="chat-message assistant">¡Hola! Puedo ayudarte a consultar totales, promedios y comparaciones de centros, usuarios, conectividad e inversión. ¿Qué quieres saber?</div>
+      </div>
+      <form class="chat-form" id="chat-form">
+        <label class="visually-hidden" for="chat-input">Escribe tu pregunta</label>
+        <textarea id="chat-input" rows="1" maxlength="1000" placeholder="Escribe tu pregunta…" required></textarea>
+        <button type="submit" aria-label="Enviar pregunta">Enviar <span aria-hidden="true">↑</span></button>
+      </form>
+      <p class="chat-hint">Respuestas basadas en los datos cargados en el panel.</p>
+    </section>
+  </div>
+  <script type="application/json" id="dashboard-data">{"states": {{ resumen_estado | tojson }}, "departments": {{ resumen_departamento | tojson }}}</script>
+  <script>window.dashboardData = JSON.parse(document.getElementById('dashboard-data').textContent);</script>
   <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>

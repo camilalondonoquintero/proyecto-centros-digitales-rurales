@@ -16,6 +16,10 @@
   height: 220px;
 }
 
+.gallery-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 @media (max-width: 700px) {
   .chart-wrap {
     height: 285px;
@@ -31,5 +35,9 @@
 
   .gallery-grid img {
     height: 185px;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr;
   }
 }

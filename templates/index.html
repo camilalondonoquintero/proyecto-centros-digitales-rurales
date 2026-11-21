@@ -80,14 +80,39 @@
       <section class="models" id="modelos">
         <div class="section-title"><div><p class="eyebrow">MODELOS DE REFERENCIA</p><h2>Señales para decidir mejor</h2></div><p>Estimaciones construidas a partir de los datos agregados por departamento.</p></div>
         <div class="image-grid">
+          <article class="image-panel"><div class="image-caption"><strong>Predicción 2025-2026</strong><span>Escenario de referencia · usuarios y operación</span></div><img src="{{ url_for('servir_grafica', filename='prediccion_2025_2026.png') }}" alt="Predicción de usuarios y centros 2025-2026"></article>
           <article class="image-panel"><div class="image-caption"><strong>Demanda potencial no observada</strong><span>Regresión lineal · usuarios activos</span><small>Proyección realizada: {{ fecha_proyeccion_usuarios }}</small></div><img src="{{ url_for('servir_grafica', filename='regresion_usuarios.png') }}" alt="Regresión de usuarios activos por departamento"></article>
           <article class="image-panel"><div class="image-caption"><strong>Capacidad de operación proyectada</strong><span>Regresión lineal · centros operando</span><small>Proyección realizada: {{ fecha_proyeccion_operacion }}</small></div><img src="{{ url_for('servir_grafica', filename='regresion_operacion.png') }}" alt="Regresión de centros en operación"></article>
         </div>
       </section>
 
       <section class="gallery">
-        <div class="section-title"><div><p class="eyebrow">DETALLE DEL UNIVERSO</p><h2>Más perspectivas</h2></div></div>
-        <div class="gallery-grid"><img src="{{ url_for('servir_grafica', filename='registros_por_estado.png') }}" alt="Registros por estado"><img src="{{ url_for('servir_grafica', filename='registros_por_conectividad.png') }}" alt="Registros por conectividad"><img src="{{ url_for('servir_grafica', filename='centros_por_departamento.png') }}" alt="Centros por departamento"><img src="{{ url_for('servir_grafica', filename='usuarios_activos_por_departamento.png') }}" alt="Usuarios activos por departamento"><img src="{{ url_for('servir_grafica', filename='velocidad_promedio_por_departamento.png') }}" alt="Velocidad promedio por departamento"></div>
+        <div class="section-title">
+          <div><p class="eyebrow">DETALLE DEL UNIVERSO</p><h2>Más perspectivas</h2></div>
+          <p>Lecturas complementarias sobre estado operativo, conectividad y distribución territorial.</p>
+        </div>
+        <div class="gallery-grid">
+          <article class="gallery-card">
+            <div class="gallery-card-heading"><div><strong>Estado operativo</strong><span>Distribución de centros por estado</span></div><span class="gallery-number">01</span></div>
+            <div class="gallery-image"><img src="{{ url_for('servir_grafica', filename='registros_por_estado.png') }}" alt="Registros por estado"></div>
+          </article>
+          <article class="gallery-card">
+            <div class="gallery-card-heading"><div><strong>Tipos de conectividad</strong><span>Comparación por tecnología disponible</span></div><span class="gallery-number">02</span></div>
+            <div class="gallery-image"><img src="{{ url_for('servir_grafica', filename='registros_por_conectividad.png') }}" alt="Registros por conectividad"></div>
+          </article>
+          <article class="gallery-card">
+            <div class="gallery-card-heading"><div><strong>Centros por departamento</strong><span>Presencia territorial registrada</span></div><span class="gallery-number">03</span></div>
+            <div class="gallery-image"><img src="{{ url_for('servir_grafica', filename='centros_por_departamento.png') }}" alt="Centros por departamento"></div>
+          </article>
+          <article class="gallery-card">
+            <div class="gallery-card-heading"><div><strong>Usuarios activos</strong><span>Usuarios mensuales por departamento</span></div><span class="gallery-number">04</span></div>
+            <div class="gallery-image"><img src="{{ url_for('servir_grafica', filename='usuarios_activos_por_departamento.png') }}" alt="Usuarios activos por departamento"></div>
+          </article>
+          <article class="gallery-card gallery-card-wide">
+            <div class="gallery-card-heading"><div><strong>Velocidad de bajada</strong><span>Promedio reportado por departamento</span></div><span class="gallery-number">05</span></div>
+            <div class="gallery-image"><img src="{{ url_for('servir_grafica', filename='velocidad_promedio_por_departamento.png') }}" alt="Velocidad promedio por departamento"></div>
+          </article>
+        </div>
       </section>
       <footer>RuralPulse <span>·</span> Datos de Centros Digitales Rurales <span>·</span> {{ fecha_corte }}</footer>
     </main>

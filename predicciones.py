@@ -222,7 +222,83 @@ guardar_grafica_regresion(
 print(f"\nGráficas guardadas en: {CARPETA_GRAFICAS}")
 
 print(
-    "\nNota: son estimaciones de referencia sobre una sola fecha de corte, "
-    "no un pronóstico temporal. La regresión usa agregados por departamento; "
-    "actualiza y valida con datos reales para medir su precisión."
+    "\nNota: los modelos usan una sola fecha de corte y agregados por departamento."
+)
+
+
+def guardar_prediccion_2025_2026(
+    usuarios_actuales,
+    usuarios_proyectados,
+    centros_actuales,
+    centros_proyectados,
+):
+    """Presenta un escenario de referencia para 2025 y 2026."""
+    años = np.array(["2025", "2026"])
+
+    figura, ejes = plt.subplots(1, 2, figsize=(12, 5))
+    series = (
+        (np.array([usuarios_actuales, usuarios_proyectados]), "Usuarios activos"),
+        (np.array([centros_actuales, centros_proyectados]), "Centros en operación"),
+    )
+    for eje, (valores, titulo) in zip(ejes, series):
+        barras = eje.bar(años, valores, color=["#9B8AC4", "#FF8A65"], width=0.55)
+        eje.bar_label(barras, padding=4, fmt="%.0f")
+        eje.set_title(titulo)
+        eje.set_ylabel("Cantidad")
+        eje.grid(axis="y", alpha=0.25)
+        eje.set_axisbelow(True)
+        eje.margins(y=0.15)
+
+    figura.suptitle(
+        "Predicción de referencia 2025-2026",
+        fontsize=14,
+        fontweight="bold",
+    )
+    figura.text(
+        0.5,
+        0.01,
+        "2025: corte de referencia · 2026: estimación a partir de demanda y operación potencial",
+        ha="center",
+        fontsize=9,
+    )
+    figura.tight_layout(rect=[0, 0.05, 1, 1])
+    figura.savefig(
+        CARPETA_GRAFICAS / "prediccion_2025_2026.png",
+        dpi=160,
+        bbox_inches="tight",
+    )
+    plt.close(figura)
+
+
+usuarios_actuales_2025 = int(en_operacion["USUARIOS_ACTIVOS_MES"].fillna(0).sum())
+usuarios_proyectados_2026 = usuarios_actuales_2025 + int(
+    round(sin_usuarios["USUARIOS_ESTIMADOS"].sum())
+)
+centros_actuales_2025 = len(en_operacion)
+centros_proyectados_2026 = min(
+    len(datos),
+    centros_actuales_2025 + int(round(estimado_por_depto.sum())),
+)
+
+guardar_prediccion_2025_2026(
+    usuarios_actuales_2025,
+    usuarios_proyectados_2026,
+    centros_actuales_2025,
+    centros_proyectados_2026,
+)
+
+print("\nPREDICCIÓN 2025-2026")
+print(
+    "2025 (corte de referencia): "
+    f"{usuarios_actuales_2025:,} usuarios activos y "
+    f"{centros_actuales_2025:,} centros en operación"
+)
+print(
+    "2026 (proyección): "
+    f"{usuarios_proyectados_2026:,} usuarios activos y "
+    f"{centros_proyectados_2026:,} centros en operación"
+)
+print(
+    "Advertencia: no existen series observadas 2025-2026 en el archivo; "
+    "2025 usa los datos existentes como base y 2026 suma la capacidad potencial estimada."
 )

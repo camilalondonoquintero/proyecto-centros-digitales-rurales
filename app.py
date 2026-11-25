@@ -19,13 +19,34 @@ def cargar_configuracion_local() -> None:
     archivo_env = BASE_DIR / ".env"
     if not archivo_env.exists():
         return
-    for linea in archivo_env.read_text(encoding="utf-8").splitlines():
+    for linea in archivo_env.read_text(encoding="utf-8-sig").splitlines():
         linea = linea.strip()
         if not linea or linea.startswith("#") or "=" not in linea:
             continue
         clave, valor = linea.split("=", 1)
         valor = valor.strip().strip("\"'")
-        os.environ.setdefault(clave.strip(), valor)
+        clave = clave.strip()
+        if clave and (not os.environ.get(clave) or clave not in os.environ):
+            os.environ[clave] = valor
+
+
+def leer_configuracion(clave: str, predeterminado: str = "") -> str:
+    """Lee una variable .env directamente antes de usarla."""
+    valor = os.getenv(clave)
+    if valor:
+        return valor
+    archivo_env = BASE_DIR / ".env"
+    if not archivo_env.exists():
+        return predeterminado
+    prefijo = f"{clave}="
+    for linea in archivo_env.read_text(encoding="utf-8-sig").splitlines():
+        linea = linea.strip()
+        if linea.startswith(prefijo):
+            valor = linea[len(prefijo):].strip().strip("\"'")
+            if valor:
+                os.environ[clave] = valor
+                return valor
+    return predeterminado
 
 
 cargar_configuracion_local()
@@ -152,7 +173,8 @@ def api_chat():
         return jsonify({"success": False, "respuesta": "Escribe una pregunta para empezar."}), 400
     pregunta = pregunta.strip()[:1000]
 
-    api_key = os.getenv("GEMINI_API_KEY")
+    cargar_configuracion_local()
+    api_key = leer_configuracion("GEMINI_API_KEY")
     if not api_key:
         return jsonify({
             "success": False,
@@ -163,7 +185,7 @@ def api_chat():
         from google import genai
         from google.genai import types
 
-        modelo = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
+        modelo = leer_configuracion("GEMINI_MODEL", "gemini-3.5-flash-lite")
         cliente = genai.Client(api_key=api_key)
         instruccion = f"""Eres un intérprete de preguntas sobre centros digitales rurales en Colombia.
 Convierte la pregunta del usuario en un plan JSON. No respondas la pregunta ni incluyas texto fuera del JSON.
